@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Governorate extends Model
+{
+    protected $fillable = [
+        'name',
+    ];
+
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class);
+    }
+
+    public function toFrontend(): array
+    {
+        return [
+            'id' => (string) $this->id,
+            'name' => $this->name,
+        ];
+    }
+}

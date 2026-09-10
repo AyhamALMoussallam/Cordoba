@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "description": "Laravel has no npm app. Use ../frontend for Vite.",
+    "scripts": {
+        "dev": "node -e \"console.error('Laravel is not started with npm. Start Apache + MySQL in XAMPP, then run npm run dev from the frontend folder.'); process.exit(1)\"",
+        "build": "node -e \"console.error('Build the React app from the frontend folder: cd ../frontend && npm run build'); process.exit(1)\""
+    }
+}
