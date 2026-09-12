@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
 
         Setting::query()->firstOrCreate([], [
             'whatsapp' => '9639989966700',
+            'main_branch_label' => 'الفرع الرئيسي',
+            'main_branch_city' => 'دمشق، سوريا',
+            'main_branch_text' => 'شبكة فروع منتشرة لتسليم الحوالات وصرف العملات بسرعة وخصوصية عالية.',
         ]);
 
         if (! Rate::query()->exists()) {

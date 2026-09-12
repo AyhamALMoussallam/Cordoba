@@ -171,7 +171,13 @@ export const api = {
   deleteBranch: (branchId: string) =>
     request<{ ok: true }>(`/branches/${branchId}`, { method: "DELETE" }),
 
-  updateSettings: (payload: { whatsapp?: string; socialLinks?: SocialLink[] }) =>
+  updateSettings: (payload: {
+    whatsapp?: string;
+    mainBranchLabel?: string;
+    mainBranchCity?: string;
+    mainBranchText?: string;
+    socialLinks?: SocialLink[];
+  }) =>
     request<{ settings: Settings }>("/settings", {
       method: "PUT",
       body: JSON.stringify(payload),

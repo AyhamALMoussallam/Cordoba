@@ -5,6 +5,9 @@ import type { Branch, FaqItem, Governorate, Rate, SocialLink } from "./types";
 
 interface SiteContextValue {
   whatsapp: string;
+  mainBranchLabel: string;
+  mainBranchCity: string;
+  mainBranchText: string;
   socialLinks: SocialLink[];
   governorates: Governorate[];
   branches: Branch[];
@@ -21,6 +24,11 @@ const SiteContext = createContext<SiteContextValue | null>(null);
 
 export function SiteProvider({ children }: { children: ReactNode }) {
   const [whatsapp, setWhatsapp] = useState("");
+  const [mainBranchLabel, setMainBranchLabel] = useState("الفرع الرئيسي");
+  const [mainBranchCity, setMainBranchCity] = useState("دمشق، سوريا");
+  const [mainBranchText, setMainBranchText] = useState(
+    "شبكة فروع منتشرة لتسليم الحوالات وصرف العملات بسرعة وخصوصية عالية.",
+  );
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [governorates, setGovernorates] = useState<Governorate[]>([]);
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -37,6 +45,9 @@ export function SiteProvider({ children }: { children: ReactNode }) {
         api.faqs(),
       ]);
       setWhatsapp(settings.whatsapp);
+      setMainBranchLabel(settings.mainBranchLabel || "الفرع الرئيسي");
+      setMainBranchCity(settings.mainBranchCity || "");
+      setMainBranchText(settings.mainBranchText || "");
       setSocialLinks(settings.socialLinks ?? []);
       setGovernorates(locations.governorates);
       setBranches(locations.branches);
@@ -75,6 +86,9 @@ export function SiteProvider({ children }: { children: ReactNode }) {
   const value = useMemo<SiteContextValue>(
     () => ({
       whatsapp,
+      mainBranchLabel,
+      mainBranchCity,
+      mainBranchText,
       socialLinks,
       governorates,
       branches,
@@ -86,7 +100,7 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       waLink: (message?: string) => whatsappHref(whatsapp, message),
       refresh,
     }),
-    [whatsapp, socialLinks, governorates, branches, rates, ratesUpdatedAt, faqs, refresh],
+    [whatsapp, mainBranchLabel, mainBranchCity, mainBranchText, socialLinks, governorates, branches, rates, ratesUpdatedAt, faqs, refresh],
   );
 
   return <SiteContext.Provider value={value}>{children}</SiteContext.Provider>;

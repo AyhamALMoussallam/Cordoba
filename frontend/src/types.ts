@@ -41,6 +41,9 @@ export interface SocialLink {
 
 export interface Settings {
   whatsapp: string;
+  mainBranchLabel: string;
+  mainBranchCity: string;
+  mainBranchText: string;
   socialLinks: SocialLink[];
 }
 

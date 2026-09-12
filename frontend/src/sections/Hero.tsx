@@ -4,7 +4,7 @@ import { PhoneText } from "../components/PhoneText";
 import { useSite } from "../site";
 
 export function Hero() {
-  const { waLink, phoneDisplay, branches, governorates } = useSite();
+  const { waLink, phoneDisplay, branches, governorates, mainBranchLabel, mainBranchCity, mainBranchText } = useSite();
   const stats = [
     { value: branches.length ? `+${branches.length}` : "—", label: "فرعاً معتمداً" },
     { value: governorates.length ? String(governorates.length) : "—", label: "محافظة سورية" },
@@ -71,11 +71,11 @@ export function Hero() {
               ))}
             </div>
             <div className="mt-6 rounded-2xl bg-cordoba-deep p-5 text-white">
-              <p className="text-sm text-white/70">الفرع الرئيسي</p>
-              <p className="mt-1 text-lg font-bold">دمشق، سوريا</p>
-              <p className="mt-3 text-sm leading-7 text-white/70">
-                شبكة فروع منتشرة لتسليم الحوالات وصرف العملات بسرعة وخصوصية عالية.
-              </p>
+              <p className="text-sm text-white/70">{mainBranchLabel || "الفرع الرئيسي"}</p>
+              <p className="mt-1 text-lg font-bold">{mainBranchCity}</p>
+              {mainBranchText && (
+                <p className="mt-3 text-sm leading-7 text-white/70">{mainBranchText}</p>
+              )}
             </div>
           </div>
         </div>

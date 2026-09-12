@@ -6,8 +6,11 @@ import { useSite } from "../site";
 import type { SocialLink } from "../types";
 
 export function ContactAdminPage() {
-  const { whatsapp, socialLinks, refresh } = useSite();
+  const { whatsapp, socialLinks, mainBranchLabel, mainBranchCity, mainBranchText, refresh } = useSite();
   const [number, setNumber] = useState(whatsapp);
+  const [branchLabel, setBranchLabel] = useState(mainBranchLabel);
+  const [branchCity, setBranchCity] = useState(mainBranchCity);
+  const [branchText, setBranchText] = useState(mainBranchText);
   const [links, setLinks] = useState<SocialLink[]>(socialLinks);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -15,8 +18,11 @@ export function ContactAdminPage() {
 
   useEffect(() => {
     setNumber(whatsapp);
+    setBranchLabel(mainBranchLabel);
+    setBranchCity(mainBranchCity);
+    setBranchText(mainBranchText);
     setLinks(socialLinks);
-  }, [whatsapp, socialLinks]);
+  }, [whatsapp, socialLinks, mainBranchLabel, mainBranchCity, mainBranchText]);
 
   function addLink() {
     setLinks((current) => [
@@ -40,6 +46,24 @@ export function ContactAdminPage() {
     }
   }
 
+  async function saveMainBranch() {
+    setSaving(true);
+    setError("");
+    try {
+      await api.updateSettings({
+        mainBranchLabel: branchLabel,
+        mainBranchCity: branchCity,
+        mainBranchText: branchText,
+      });
+      await refresh();
+      setMessage("تم حفظ بطاقة الفرع الرئيسي");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "تعذر حفظ البطاقة");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function saveSocial(event: FormEvent) {
     event.preventDefault();
     setSaving(true);
@@ -58,7 +82,7 @@ export function ContactAdminPage() {
   }
 
   return (
-    <AdminLayout title="واتساب وروابط التواصل">
+    <AdminLayout title="واتساب والتواصل">
       {message && <p className="mb-4 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{message}</p>}
       {error && <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
@@ -73,6 +97,42 @@ export function ContactAdminPage() {
         />
         <button type="submit" disabled={saving} className="mt-4 rounded-xl bg-cordoba px-5 py-3 font-bold text-white">
           حفظ الرقم
+        </button>
+      </form>
+
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          void saveMainBranch();
+        }}
+        className="mb-6 max-w-xl rounded-[1.6rem] bg-white p-6 shadow-sm"
+      >
+        <h2 className="text-lg font-extrabold text-cordoba">بطاقة الفرع الرئيسي</h2>
+        <p className="mt-1 text-sm text-muted">تظهر في الصفحة الرئيسية داخل بطاقة CORDOBA DESK.</p>
+        <label className="mt-4 block text-sm font-bold text-ink">العنوان</label>
+        <input
+          value={branchLabel}
+          onChange={(event) => setBranchLabel(event.target.value)}
+          placeholder="الفرع الرئيسي"
+          className="mt-1 w-full rounded-xl border border-black/10 px-4 py-3"
+        />
+        <label className="mt-4 block text-sm font-bold text-ink">المدينة / الموقع</label>
+        <input
+          value={branchCity}
+          onChange={(event) => setBranchCity(event.target.value)}
+          placeholder="دمشق، سوريا"
+          className="mt-1 w-full rounded-xl border border-black/10 px-4 py-3"
+        />
+        <label className="mt-4 block text-sm font-bold text-ink">النص</label>
+        <textarea
+          value={branchText}
+          onChange={(event) => setBranchText(event.target.value)}
+          rows={3}
+          placeholder="شبكة فروع منتشرة..."
+          className="mt-1 w-full rounded-xl border border-black/10 px-4 py-3"
+        />
+        <button type="submit" disabled={saving} className="mt-4 rounded-xl bg-cordoba px-5 py-3 font-bold text-white">
+          حفظ البطاقة
         </button>
       </form>
 
