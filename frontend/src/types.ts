@@ -53,3 +53,20 @@ export interface FaqItem {
   answer: string;
   sortOrder: number;
 }
+
+export interface Position {
+  id: string;
+  title: string;
+  sortOrder: number;
+}
+
+export interface Application {
+  id: string;
+  positionId: string | null;
+  positionTitle: string;
+  name: string;
+  email: string;
+  phone: string;
+  cvName: string;
+  createdAt: string;
+}

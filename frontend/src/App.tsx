@@ -7,6 +7,8 @@ import { AccountAdminPage } from "./pages/AccountAdmin";
 import { BranchesAdminPage } from "./pages/BranchesAdmin";
 import { ContactAdminPage } from "./pages/ContactAdmin";
 import { FaqAdminPage } from "./pages/FaqAdmin";
+import { CareerPage } from "./pages/Career";
+import { CareerAdminPage } from "./pages/CareerAdmin";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export default function App() {
@@ -14,6 +16,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/career" element={<CareerPage />} />
       <Route path="/admin/login" element={<LoginPage />} />
       <Route
         path="/admin"
@@ -44,6 +47,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <ContactAdminPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/careers"
+        element={
+          <ProtectedRoute>
+            <CareerAdminPage />
           </ProtectedRoute>
         }
       />

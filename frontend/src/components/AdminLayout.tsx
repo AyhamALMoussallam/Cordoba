@@ -1,4 +1,4 @@
-import { CircleHelp, LogOut, MapPin, MessageCircle, Settings, Tags } from "lucide-react";
+import { Briefcase, CircleHelp, LogOut, MapPin, MessageCircle, Settings, Tags } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth";
 import { Logo } from "./Logo";
@@ -47,6 +47,15 @@ export function AdminLayout({ title, children }: { title: string; children: Reac
             >
               <MapPin className="h-4 w-4" />
               الفروع والمحافظات
+            </NavLink>
+            <NavLink
+              to="/admin/careers"
+              className={({ isActive }) =>
+                `flex items-center gap-2 rounded-xl px-3 py-2.5 ${isActive ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"}`
+              }
+            >
+              <Briefcase className="h-4 w-4" />
+              الوظائف
             </NavLink>
             <NavLink
               to="/admin/contact"

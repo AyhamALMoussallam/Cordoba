@@ -1,4 +1,4 @@
-import type { Admin, Branch, FaqItem, Governorate, Rate, Settings, SocialLink } from "./types";
+import type { Admin, Application, Branch, FaqItem, Governorate, Position, Rate, Settings, SocialLink } from "./types";
 
 const TOKEN_KEY = "cordoba-admin-token";
 
@@ -32,7 +32,7 @@ function writeToken(token: string | null) {
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers);
   headers.set("Accept", "application/json");
-  if (options.body && !headers.has("Content-Type")) {
+  if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
   const token = readToken();
@@ -50,6 +50,34 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     fail(typeof payload.message === "string" ? payload.message : "حدث خطأ");
   }
   return payload as T;
+}
+
+async function downloadFile(path: string, filename: string) {
+  const headers = new Headers();
+  const token = readToken();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+
+  let response: Response;
+  try {
+    response = await fetch(`${apiBase()}${path}`, { headers });
+  } catch {
+    fail("تعذر الاتصال بالخادم. تأكد أن Apache وMySQL يعملان من XAMPP");
+  }
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    fail(typeof payload.message === "string" ? payload.message : "تعذر تنزيل الملف");
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 async function geocodeOpenStreetMap(q: string) {
@@ -170,6 +198,41 @@ export const api = {
 
   deleteBranch: (branchId: string) =>
     request<{ ok: true }>(`/branches/${branchId}`, { method: "DELETE" }),
+
+  positions: () => request<{ positions: Position[] }>("/positions"),
+
+  createPosition: (title: string) =>
+    request<{ position: Position }>("/positions", {
+      method: "POST",
+      body: JSON.stringify({ title }),
+    }),
+
+  updatePosition: (positionId: string, title: string) =>
+    request<{ position: Position }>(`/positions/${positionId}`, {
+      method: "PUT",
+      body: JSON.stringify({ title }),
+    }),
+
+  deletePosition: (positionId: string) =>
+    request<{ ok: true }>(`/positions/${positionId}`, { method: "DELETE" }),
+
+  applications: () => request<{ applications: Application[] }>("/applications"),
+
+  apply: (payload: { name: string; email: string; phone: string; positionId: string; cv: File }) => {
+    const body = new FormData();
+    body.set("name", payload.name);
+    body.set("email", payload.email);
+    body.set("phone", payload.phone);
+    body.set("positionId", payload.positionId);
+    body.set("cv", payload.cv);
+    return request<{ ok: true }>("/applications", { method: "POST", body });
+  },
+
+  downloadApplicationCv: (applicationId: string, filename: string) =>
+    downloadFile(`/applications/${applicationId}/cv`, filename),
+
+  deleteApplication: (applicationId: string) =>
+    request<{ ok: true }>(`/applications/${applicationId}`, { method: "DELETE" }),
 
   updateSettings: (payload: {
     whatsapp?: string;
