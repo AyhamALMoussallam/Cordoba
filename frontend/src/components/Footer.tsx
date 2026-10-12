@@ -31,7 +31,12 @@ export function Footer() {
             <a href={hashHref("rates")} className="hover:text-white">أسعار العملات</a>
             <a href={hashHref("branches")} className="hover:text-white">الفروع</a>
             <Link to="/career" className="hover:text-white">الوظائف</Link>
-            <Link to="/privacy" className="hover:text-white">سياسة الخصوصية</Link>
+            <Link
+              to="/privacy"
+              className="inline-flex w-fit items-center rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-bold text-white transition hover:bg-white hover:text-cordoba-deep"
+            >
+              سياسة الخصوصية
+            </Link>
           </div>
         </div>
         <div className="lg:col-span-4">
@@ -55,8 +60,14 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-4 py-4 text-xs text-white/45 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 text-xs text-white/45 lg:px-8">
           <p>© {new Date().getFullYear()} Cordoba Money Transfer. جميع الحقوق محفوظة.</p>
+          <Link
+            to="/privacy"
+            className="rounded-full border border-white/20 px-3 py-1.5 font-bold text-white/80 transition hover:border-white/40 hover:text-white"
+          >
+            سياسة الخصوصية
+          </Link>
         </div>
       </div>
     </footer>

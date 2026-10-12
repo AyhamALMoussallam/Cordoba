@@ -57,7 +57,7 @@ export function Hero() {
           <div className="relative overflow-hidden rounded-[2.5rem] border border-white/60 bg-white/80 p-6 shadow-[0_30px_80px_rgba(12,59,46,0.18)] backdrop-blur">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold tracking-[0.2em] text-gold">CORDOBA DESK</p>
+                <p className="text-xs font-bold text-gold">منصة قرطبة</p>
                 <p className="mt-1 text-lg font-extrabold text-cordoba">منصة الحوالات والصرافة</p>
               </div>
               <Landmark className="h-8 w-8 text-gold" />

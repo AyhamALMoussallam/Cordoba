@@ -108,7 +108,7 @@ export function ContactAdminPage() {
         className="mb-6 max-w-xl rounded-[1.6rem] bg-white p-6 shadow-sm"
       >
         <h2 className="text-lg font-extrabold text-cordoba">بطاقة الفرع الرئيسي</h2>
-        <p className="mt-1 text-sm text-muted">تظهر في الصفحة الرئيسية داخل بطاقة CORDOBA DESK.</p>
+        <p className="mt-1 text-sm text-muted">تظهر في الصفحة الرئيسية داخل بطاقة منصة قرطبة.</p>
         <label className="mt-4 block text-sm font-bold text-ink">العنوان</label>
         <input
           value={branchLabel}
