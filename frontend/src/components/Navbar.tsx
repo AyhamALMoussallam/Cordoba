@@ -38,8 +38,8 @@ export function Navbar() {
       <Link to="/admin/login" className="absolute left-0 top-0 z-50 px-4 py-2 text-xs text-white">
         لوحة التحكم
       </Link>
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 pb-3 pt-8 lg:px-8">
-        <Logo />
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-[0.9625rem] lg:px-8">
+        <Logo className="h-[2.8rem] md:h-[3.15rem]" />
         <nav className="hidden items-center gap-7 text-[15px] font-medium text-ink/80 lg:flex">
           <NavItems className="transition hover:text-cordoba" />
         </nav>
