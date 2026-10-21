@@ -52,37 +52,45 @@ class AuthController extends Controller
         ]);
     }
 
-    public function updateAccount(Request $request): JsonResponse
-    {
-        $user = $request->user();
+    
+public function updateAccount(Request $request): JsonResponse
+{
+    $user = $request->user();
 
-        $data = $request->validate([
-            'currentPassword' => ['required', 'string'],
-            'email' => ['nullable', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-            'password' => ['nullable', 'string', 'min:8', 'regex:/[A-Za-z]/', 'regex:/[0-9]/'],
-        ], [
-            'currentPassword.required' => 'أدخل كلمة المرور الحالية',
-            'email.unique' => 'هذا البريد مستخدم مسبقاً',
-            'password.min' => 'كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل وتحتوي حرفاً ورقماً.',
-            'password.regex' => 'كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل وتحتوي حرفاً ورقماً.',
+    $data = $request->validate([
+        'currentPassword' => ['required', 'string'],
+        'email' => ['nullable', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+        'password' => ['nullable', 'string', 'min:8', 'regex:/[A-Za-z]/', 'regex:/[0-9]/'],
+    ], [
+        'currentPassword.required' => 'أدخل كلمة المرور الحالية',
+        'email.unique' => 'هذا البريد مستخدم مسبقاً',
+        'password.min' => 'كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل وتحتوي حرفاً ورقماً.',
+        'password.regex' => 'كلمة المرور الجديدة يجب أن تكون 8 أحرف على الأقل وتحتوي حرفاً ورقماً.',
+    ]);
+
+    if (! Hash::check($data['currentPassword'], $user->password)) {
+        throw ValidationException::withMessages([
+            'currentPassword' => 'كلمة المرور الحالية غير صحيحة',
         ]);
-
-        if (! Hash::check($data['currentPassword'], $user->password)) {
-            throw ValidationException::withMessages([
-                'currentPassword' => 'كلمة المرور الحالية غير صحيحة',
-            ]);
-        }
-
-        if (! empty($data['email'])) {
-            $user->email = strtolower(trim($data['email']));
-        }
-
-        if (! empty($data['password'])) {
-            $user->password = $data['password'];
-        }
-
-        $user->save();
-
-        return response()->json(['admin' => $user->fresh()->toAdmin()]);
     }
+
+    if (! empty($data['email'])) {
+        $user->email = strtolower(trim($data['email']));
+    }
+
+    $passwordChanged = ! empty($data['password']);
+
+    if ($passwordChanged) {
+        $user->password = $data['password'];
+    }
+
+    $user->save();
+
+    if ($passwordChanged) {
+        $user->tokens()->delete();
+    }
+
+    return response()->json(['admin' => $user->fresh()->toAdmin()]);
+}
+
 }

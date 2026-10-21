@@ -2,8 +2,10 @@ import { useState, type FormEvent } from "react";
 import { api } from "../api";
 import { useAuth } from "../auth";
 import { AdminLayout } from "../components/AdminLayout";
+import { useNavigate } from "react-router-dom";
 
 export function AccountAdminPage() {
+  
   const { admin, setAdmin } = useAuth();
   const [email, setEmail] = useState(admin?.email ?? "");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -12,6 +14,7 @@ export function AccountAdminPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -38,17 +41,25 @@ export function AccountAdminPage() {
         password: password || undefined,
       });
       setAdmin(data.admin);
+
+      if (password) {
+        sessionStorage.removeItem("cordoba-admin-token");
+        setAdmin(null);
+        navigate("/admin/login", { replace: true });
+        return;
+      }
+
       setEmail(data.admin.email);
-      setCurrentPassword("");
-      setPassword("");
-      setConfirmPassword("");
-      setMessage("تم حفظ بيانات الدخول");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "تعذر حفظ الحساب");
-    } finally {
-      setSaving(false);
-    }
-  }
+            setCurrentPassword("");
+            setPassword("");
+            setConfirmPassword("");
+            setMessage("تم حفظ بيانات الدخول");
+          } catch (err) {
+            setError(err instanceof Error ? err.message : "تعذر حفظ الحساب");
+          } finally {
+            setSaving(false);
+          }
+        }
 
   return (
     <AdminLayout title="البريد وكلمة المرور">

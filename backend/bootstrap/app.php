@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -18,22 +18,28 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->trustProxies(at: '*');
-    })
+    $middleware->trustProxies(at: '*');
+
+    $middleware->redirectGuestsTo(
+        fn (Request $request) => $request->is('api/*') || preg_match('~(?:^|/)api(?:/|$)~', $request->path()) === 1
+            ? null
+            : route('login')
+    );
+})
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request): bool => $request->is('api/*') || $request->expectsJson()
+            fn (Request $request): bool => preg_match('~(?:^|/)api(?:/|$)~', $request->path()) === 1 || $request->expectsJson()
         );
 
         $exceptions->render(function (AuthenticationException $e, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
-                return response()->json(['message' => 'غير مسجل الدخول'], 401);
+            if (preg_match('~(?:^|/)api(?:/|$)~', $request->path()) === 1 || $request->expectsJson()) {
+                return response()->json(['message' => 'Unauthenticated.'], 401);
             }
         });
 
         $exceptions->render(function (ValidationException $e, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
-                $message = collect($e->errors())->flatten()->first() ?: 'بيانات غير صحيحة';
+            if (preg_match('~(?:^|/)api(?:/|$)~', $request->path()) === 1 || $request->expectsJson()) {
+                $message = collect($e->errors())->flatten()->first() ?: 'Ø¨ÙŠØ§Ù†Ø§Øª ØºÙŠØ± ØµØ­ÙŠØ­Ø©';
 
                 return response()->json([
                     'message' => $message,
@@ -43,14 +49,15 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (PostTooLargeException $e, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
-                return response()->json(['message' => 'حجم الملف أكبر من الحد المسموح'], 413);
+            if (preg_match('~(?:^|/)api(?:/|$)~', $request->path()) === 1 || $request->expectsJson()) {
+                return response()->json(['message' => 'Ø­Ø¬Ù… Ø§Ù„Ù…Ù„Ù Ø£ÙƒØ¨Ø± Ù…Ù† Ø§Ù„Ø­Ø¯ Ø§Ù„Ù…Ø³Ù…ÙˆØ­'], 413);
             }
         });
 
         $exceptions->render(function (ModelNotFoundException|NotFoundHttpException $e, Request $request) {
-            if ($request->is('api/*') || $request->expectsJson()) {
-                return response()->json(['message' => 'العنصر غير موجود'], 404);
+            if (preg_match('~(?:^|/)api(?:/|$)~', $request->path()) === 1 || $request->expectsJson()) {
+                return response()->json(['message' => 'Ø§Ù„Ø¹Ù†ØµØ± ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯'], 404);
             }
         });
     })->create();
+
